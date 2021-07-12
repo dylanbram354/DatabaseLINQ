@@ -242,7 +242,7 @@ namespace DatabaseFirstLINQ
             _context.Products.Update(myProduct);
             _context.SaveChanges();
 
-            foreach(Product product in _context.Products)
+            foreach (Product product in _context.Products)
             {
                 Console.WriteLine($"{product.Name} - {product.Price}");
             }
@@ -254,7 +254,7 @@ namespace DatabaseFirstLINQ
             // Change the role of the user we created to "Employee"
             // HINT: You need to delete the existing role relationship and then create a new UserRole object and add it to the UserRoles table
             // See problem eighteen as an example of removing a role relationship
-            var userRole = _context.UserRoles.Where(ur => ur.User.Email == "mike@gmail.com").SingleOrDefault();
+            var userRole = _context.UserRoles.Include(user => user.User).Where(ur => ur.User.Email == "mike@gmail.com").SingleOrDefault();
             _context.UserRoles.Remove(userRole);
             UserRole newUserRole = new UserRole()
             {
