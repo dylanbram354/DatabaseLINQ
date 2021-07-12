@@ -26,9 +26,9 @@ namespace DatabaseFirstLINQ
             //ProblemNine();
             //ProblemTen();
             //ProblemEleven();
-            ProblemTwelve();
+            //ProblemTwelve();
             //ProblemThirteen();
-            //ProblemFourteen();
+            ProblemFourteen();
             //ProblemFifteen();
             //ProblemSixteen();
             //ProblemSeventeen();
@@ -155,11 +155,11 @@ namespace DatabaseFirstLINQ
         {
             // Write a LINQ query that retreives all of the products in the shopping cart of users who have the role of "Employee".
             // Then print the user's email as well as the product's name, price, and quantity to the console.
-           // var Users = _context.UserRoles.Include(role => role.Role).Where(user => user.RoleId == 2);
-        
+            // var Users = _context.UserRoles.Include(role => role.Role).Where(user => user.RoleId == 2);
+
 
             //var employeeUsers = _context.UserRoles.Include(ur => ur.Role).Include(ur => ur.User).Where(ur => ur.Role.RoleName == "Employee");
-            
+
         }
 
         // <><><><><><><><> CUD (Create, Update, Delete) Actions <><><><><><><><><>
@@ -173,7 +173,7 @@ namespace DatabaseFirstLINQ
             {
                 Email = "david@gmail.com",
                 Password = "DavidsPass123",
-               
+
             };
             _context.Users.Add(newUser);
             _context.SaveChanges();
@@ -209,9 +209,20 @@ namespace DatabaseFirstLINQ
         private void ProblemFourteen()
         {
             // Add the product you create to the user we created in the ShoppingCart junction table using LINQ.
+            var productId = _context.Products.Where(p => p.Name == "Tool Chest").Select(p => p.Id).SingleOrDefault();
+            var userId = _context.Users.Where(u => u.Email == "david@gmail.com").Select(u => u.Id).SingleOrDefault();
+
+            ShoppingCart newSelection = new ShoppingCart()
+            {
+                UserId = userId,
+                ProductId = productId,
+                Quantity = 1,
+            };
+
+            _context.ShoppingCarts.Add(newSelection);
+            _context.SaveChanges();
 
         }
-
         // <><> U Actions (Update) <><>
 
         private void ProblemFifteen()
