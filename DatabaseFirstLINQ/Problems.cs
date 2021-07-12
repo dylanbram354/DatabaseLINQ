@@ -18,7 +18,7 @@ namespace DatabaseFirstLINQ
             //ProblemOne();
             //ProblemTwo();
             //ProblemThree();
-            ProblemFour();
+            //ProblemFour();
             //ProblemFive();
             //ProblemSix();
             //ProblemSeven();
@@ -78,10 +78,12 @@ namespace DatabaseFirstLINQ
             // Write a LINQ query that gets each product that contains an "s" in the products name.
             // Then print the name of each product from the above query to the console.
 
-            string test = "test";
-            Console.WriteLine(test.Contains("s"));
-
             var productsWithS = _context.Products.Where(p => p.Name.ToUpper().Contains("S"));
+            foreach(Product product in productsWithS)
+            {
+                Console.WriteLine(product.Name);
+            }
+
         }
 
         private void ProblemFive()
@@ -89,12 +91,24 @@ namespace DatabaseFirstLINQ
             // Write a LINQ query that gets all of the users who registered BEFORE 2016
             // Then print each user's email and registration date to the console.
 
+            var usersBefore2016 = _context.Users.Where(u => u.RegistrationDate < new DateTime (2016, 1, 1));
+            foreach (User user in usersBefore2016)
+            {
+                Console.WriteLine(user.Email + " " + user.RegistrationDate);
+            }
+
         }
 
         private void ProblemSix()
         {
             // Write a LINQ query that gets all of the users who registered AFTER 2016 and BEFORE 2018
             // Then print each user's email and registration date to the console.
+
+            var users = _context.Users.Where(u => new DateTime(2016, 1, 1) < u.RegistrationDate && u.RegistrationDate < new DateTime(2018, 1, 1));
+            foreach (User user in users)
+            {
+                Console.WriteLine(user.Email + " " + user.RegistrationDate);
+            }
 
         }
 
@@ -116,6 +130,12 @@ namespace DatabaseFirstLINQ
             // Write a LINQ query that retreives all of the products in the shopping cart of the user who has the email "afton@gmail.com".
             // Then print the product's name, price, and quantity to the console.
 
+            var productsInCart = _context.ShoppingCarts.Include(entry => entry.Product).Include(entry => entry.User).Where(entry => entry.User.Email == "afton@gmail.com");
+            foreach (ShoppingCart shoppingCart in productsInCart)
+            {
+                Console.WriteLine(shoppingCart.Product.Name + " " + shoppingCart.Product.Price + " " + shoppingCart.Quantity);
+            }
+
         }
 
         private void ProblemNine()
@@ -124,12 +144,19 @@ namespace DatabaseFirstLINQ
             // HINT: End of query will be: .Select(sc => sc.Product.Price).Sum();
             // Then print the total of the shopping cart to the console.
 
+            var sumOfPrices = _context.ShoppingCarts.Include(entry => entry.Product).Include(entry => entry.User).Where(entry => entry.User.Email == "oda@gmail.com")
+                .Select(sc => sc.Product.Price).Sum();
+
+            Console.WriteLine(sumOfPrices);
+
         }
 
         private void ProblemTen()
         {
             // Write a LINQ query that retreives all of the products in the shopping cart of users who have the role of "Employee".
             // Then print the user's email as well as the product's name, price, and quantity to the console.
+
+            var employeeUsers = _context.UserRoles.Include(ur => ur.Role).Include(ur => ur.User).Where(ur => ur.Role.RoleName == "Employee");
 
         }
 
