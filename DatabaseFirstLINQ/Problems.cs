@@ -359,6 +359,110 @@ namespace DatabaseFirstLINQ
         }
 
         // BIG ONE
+private void BonusThree()
+        {
+            // 1. Create functionality for a user to sign in via the console
+            // 2. If the user succesfully signs in
+            // a. Give them a menu where they perform the following actions within the console
+            // View the products in their shopping cart
+            // View all products in the Products table
+            // Add a product to the shopping cart (incrementing quantity if that product is already in their shopping cart)
+            // Remove a product from their shopping cart
+            // 3. If the user does not succesfully sing in
+            // a. Display "Invalid Email or Password"
+            // b. Re-prompt the user for credentials
+            bool validLogin = false;
+            User user = new User();
+
+            void SignIn()
+            {
+                Console.WriteLine($"Please enter your email");
+                string userEmail = Console.ReadLine();
+                Console.WriteLine($"Please enter a password");
+                string userPw = Console.ReadLine();
+
+                var checkUserValid = _context.Users.Where(user => user.Email == userEmail).Where(pw => pw.Password == userPw).Any();
+                if (checkUserValid)
+                {
+                    Console.WriteLine($"Signed In");
+                    user = _context.Users.Where(user => user.Email == userEmail).Where(pw => pw.Password == userPw).SingleOrDefault();
+                    validLogin = true;
+
+
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid Email or Password");
+
+                }
+            }
+
+            void MainMenu()
+            {
+                Console.WriteLine($"Please select and option"); 
+                Console.WriteLine($"1: view cart");
+                Console.WriteLine($"2: view all products");
+                Console.WriteLine($"3: add a product to the cart");
+                Console.WriteLine($"4: remove a product from the cart");
+                Console.WriteLine($"5: sign out");
+                string userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        ViewCart();
+                        Console.WriteLine($"Press any key to continue");
+                        Console.ReadLine();
+                        break;
+                    case "2":
+                        ViewAllProducts();
+                        Console.WriteLine($"Press any key to continue");
+                        Console.ReadLine();
+                        break;
+                    case "3":
+                        AddProduct();
+                        Console.WriteLine($"Press any key to continue");
+                        Console.ReadLine();
+                        break;
+                    case "4":
+                       DeleteProduct();
+                       Console.WriteLine($"Press any key to continue");
+                       Console.ReadLine();
+                       break;
+                    case "5":
+                        Console.WriteLine($"Signed Out");
+                        validLogin = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            void ViewCart()
+            {
+                var cart = _context.ShoppingCarts.Include(sc => sc.Product).Include(sc => sc.User).Where(sc => sc.User.Id == user.Id);
+                foreach (var item in cart) 
+                {
+                    Console.WriteLine($"Product Name: {item.Product.Name}");
+                    Console.WriteLine($"Product Id: {item.ProductId}");
+                    Console.WriteLine($"Product Price: ${item.Product.Price}");
+                    Console.WriteLine($"Product Quantity: {item.Quantity}");
+                    Console.WriteLine("");
+                }
+       
+            }
+
+            void ViewAllProducts()
+            {
+                var allProducts = _context.Products;
+                foreach (Product product in allProducts)
+                {
+                    Console.WriteLine($"{product.Name} - ${product.Price} - ID {product.Id}");
+                    Console.WriteLine($"{product.Description}");
+                    Console.WriteLine("");
+                }
+            }
+
             void AddProduct()
             {
                 List<int> allProductIds = _context.Products.Select(p => p.Id).ToList();
