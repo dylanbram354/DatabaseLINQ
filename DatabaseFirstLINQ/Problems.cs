@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using DatabaseFirstLINQ.Models;
+using System.Collections.Generic;
 
 namespace DatabaseFirstLINQ
 {
@@ -32,9 +33,12 @@ namespace DatabaseFirstLINQ
             //ProblemFifteen();
             //ProblemSixteen();
             //ProblemSeventeen();
-            ProblemEighteen();
+            //ProblemEighteen();
             //ProblemNineteen();
-            ProblemTwenty();
+            //ProblemTwenty();
+
+            //BonusOne();
+            BonusTwo();
         }
 
         // <><><><><><><><> R Actions (Read) <><><><><><><><><>
@@ -336,6 +340,21 @@ namespace DatabaseFirstLINQ
         {
             // Write a query that finds the total of every users shopping cart products using LINQ.
             // Display the total of each users shopping cart as well as the total of the toals to the console.
+
+            List<int> userIds = _context.Users.Select(u => u.Id).ToList();
+            decimal? grandTotal = 0;
+            foreach (int id in userIds)
+            {
+                var cart = _context.ShoppingCarts.Include(sc => sc.Product).Include(sc => sc.User).Where(sc => sc.User.Id == id).Select(sc => new { sc.Product.Price, sc.Quantity });
+                decimal? total = 0;
+                foreach (var item in cart)
+                {
+                    total += item.Price*item.Quantity;
+                }
+                grandTotal += total;
+                Console.WriteLine($"User {id} total: {total}");
+            }
+            Console.WriteLine($"Grand total of all carts: {grandTotal}");
         }
 
         // BIG ONE
