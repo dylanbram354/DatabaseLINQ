@@ -358,7 +358,7 @@ namespace DatabaseFirstLINQ
         }
 
         // BIG ONE
-        private void BonusThree()
+private void BonusThree()
         {
             // 1. Create functionality for a user to sign in via the console
             // 2. If the user succesfully signs in
@@ -370,7 +370,76 @@ namespace DatabaseFirstLINQ
             // 3. If the user does not succesfully sing in
             // a. Display "Invalid Email or Password"
             // b. Re-prompt the user for credentials
+            bool validLogin = false;
+            User user = new User();
 
+            void SignIn()
+            {
+                Console.WriteLine($"Please enter your email");
+                string userEmail = Console.ReadLine();
+                Console.WriteLine($"Please enter a password");
+                string userPw = Console.ReadLine();
+
+                var checkUserValid = _context.Users.Where(user => user.Email == userEmail).Where(pw => pw.Password == userPw).Any();
+                if (checkUserValid)
+                {
+                    Console.WriteLine($"Signed In");
+                    user = _context.Users.Where(user => user.Email == userEmail).Where(pw => pw.Password == userPw).SingleOrDefault();
+                    validLogin = true;
+
+
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid Email or Password");
+
+                }
+            }
+
+            void MainMenu()
+            {
+                Console.WriteLine($"Please select and option"); 
+                Console.WriteLine($"1: view cart");
+                Console.WriteLine($"2: view all products");
+                Console.WriteLine($"3: add a product to the cart");
+                Console.WriteLine($"4: remove a product from the cart");
+                Console.WriteLine($"5: sign out");
+                string userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        ViewCart();
+                        Console.WriteLine($"Press and key to continue");
+                        Console.ReadLine();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            void ViewCart()
+            {
+                var cart = _context.ShoppingCarts.Include(sc => sc.Product).Include(sc => sc.User).Where(sc => sc.User.Id == user.Id);
+                foreach (var item in cart) 
+                {
+                    Console.WriteLine($"Product Name: {item.Product.Name}");
+                    Console.WriteLine($"Product Price: ${item.Product.Price}");
+                    Console.WriteLine($"Product Quantity: {item.Quantity}");
+                }
+       
+            }
+
+
+            while (!validLogin)
+            {
+                SignIn(); 
+            }
+            while (validLogin)
+            {
+                MainMenu();
+                validLogin = false;
+            }
         }
 
     }
